@@ -1,0 +1,46 @@
+1 - What is Generative AI?
+
+Generative AI (Gen AI) is a type of artificial intelligence designed to create new content. By content, we mean text, images, videos, voice, music, code, and more.
+
+Traditionally, AI models were trained to analyze or classify data—for example, detecting objects in images or categorizing text. Generative AI goes a step further: it generates new content that is similar to the data it was trained on, effectively creating something original while learning from existing patterns.
+
+So inshort the generation of content using AI is called generative AI.
+
+2 - What are LLMs?
+LLMs, or Large Language Models, are AI models designed specifically for generating and understanding text. They can write, summarize, translate, or answer questions by learning patterns from vast amounts of text data.
+
+
+3 – What did we do before LLMs existed?
+
+Before LLMs, we used statistical models. These models looked at the previous few words and guessed the next word using word frequency and probability. They were sometimes accurate, but very limited.
+
+To improve, we started using neural networks and deep learning. One type we used was called Recurrent Neural Networks (RNNs). RNNs could generate better quality text than statistical models, but they had a limited memory. This meant they could only understand short contexts, not long ones, so they weren’t perfect.
+
+Then, Google published a research paper called “Attention is All You Need”. They introduced a new architecture called the Transformer, which could look at all words in a sentence at the same time. This made text generation much more powerful and accurate.
+
+Based on this research, new models were created, like GPT models and BERT models. The Transformer architecture became a game-changer in AI.
+
+These models don’t just start predicting words on their own—they are trained on massive amounts of data, like Wikipedia, books, and information available on the internet.
+
+When we say a model has 8 billion parameters, or another has 32 billion, it refers to the weights of the neural network. More parameters usually mean the model is bigger and more powerful, while fewer parameters make it lighter and faster. Some of today’s state-of-the-art models are trained on trillions of parameters, which makes them extremely capable.
+
+
+4 - Models and there capabilities?
+There aren’t official categories for AI models, but we can group them to understand their capabilities:
+
+1. GPT Models:
+These models generate outputs immediately when they get input.
+They don’t perform a step-by-step “thinking” process.
+This makes GPT models very fast at generating text.
+
+2. Reasoning Models:
+These models think through the problem before giving an output.
+For example, if you ask the model to generate an image or solve a complex task, it analyzes the input step by step before producing the result.
+Because of this thought process, reasoning models are slower than GPT models, but they can handle more complex tasks.
+
+When to use which:
+Just because GPT models are fast doesn’t mean we always use them.
+For simple tasks, GPT models are fine.
+For complex tasks or multi-step planning, reasoning models are better.
+In agentic systems, sometimes a “router” is used—a decision-making point where the model decides which path to take.
+In these cases, the model needs reasoning power, so reasoning models are preferred.
