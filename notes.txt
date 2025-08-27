@@ -44,3 +44,15 @@ For simple tasks, GPT models are fine.
 For complex tasks or multi-step planning, reasoning models are better.
 In agentic systems, sometimes a “router” is used—a decision-making point where the model decides which path to take.
 In these cases, the model needs reasoning power, so reasoning models are preferred.
+
+
+5 - Distil Model?
+
+A distil model is a smaller version of a big model.
+The big model acts as a teacher, sharing its knowledge.
+The small model learns from the big model, trying to copy its behavior.
+This process of transferring knowledge is called distillation.
+
+Why use it:
+The small model is faster and lighter.
+It can do most of what the big model does, but with less computing power.
