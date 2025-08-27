@@ -56,3 +56,40 @@ This process of transferring knowledge is called distillation.
 Why use it:
 The small model is faster and lighter.
 It can do most of what the big model does, but with less computing power.
+
+
+6 - Tokens? 
+
+A token is the smallest piece of text that an LLM can understand.
+When you type something like:
+
+👉 "write me a poem"
+It doesn’t go directly into the model. First, it passes through a step called tokenization.
+A special tool called a tokenizer breaks the sentence into tokens.
+A token can be a whole word or a part of a word (depends on how the tokenizer works).
+Each token is then converted into a number (an ID).
+
+Why? Because:
+➡️ LLMs don’t understand text. They only understand numbers.
+So, the text → tokens → numbers → then embeddings → then into the neural network.
+
+Example:
+"write me a poem" might become tokens like:
+["write", " me", " a", " poem"]
+and then numbers like:
+[1509, 502, 257, 10503]
+
+This is how your text is translated into something the model can actually process.
+
+Why tokens matter:
+We need to understand tokens because when we use APIs in Generative AI, the pricing is based on the number of tokens processed. Both the input tokens (your prompt) and the output tokens (the model’s reply) count toward usage. So, if a company says “1 million tokens for $1,” it means that once your total processed tokens reach one million, you will be charged $1.
+
+
+
+Context?
+The surrounding text or information the model uses to understand and generate relevant responses.
+Models do have a lot of knowledge, but they don’t have our personal information. For example, if we are building an agentic system for a company, the model doesn’t know the company’s internal information. We can provide that information to the model, and this approach is called RAG (Retrieval-Augmented Generation).
+
+Along with that, there’s also something called message history. When we chat with an AI, by design the model is stateless—meaning if we ask a question and it answers, it won’t remember that conversation in the next prompt. To solve this limitation, whenever we send input, we also include the message history.
+
+All of this information we provide to the LLM is called context.
