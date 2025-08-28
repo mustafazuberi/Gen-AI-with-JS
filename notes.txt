@@ -107,3 +107,35 @@ The process of an LLM taking input and producing output is called inference, and
 The race isn’t only about who has the biggest or most capable model—it’s also about who can deliver low-latency inference at scale (so users get instant responses without huge costs). This is why you see a lot of work around model optimization, GPU/TPU efficiency, quantization, batching, and distributed inference systems.
 
 So when we select a model, we also need to consider its inference speed. If our application requires fast responses, we must ensure the model provides low-latency inference, which is usually mentioned in its specifications. Larger models typically take more time compared to smaller ones, and reasoning models can be slower as well because of the additional steps involved.
+
+
+Prompt Engineering?
+Prompt Engineering is one of the most important concepts in generative AI if we truly want to build agents and AI systems effectively.
+
+The problem is that models are not deterministic, which means if we give the same input now, the output might be something different just a minute later. The output is not fixed, and the model does not always provide consistency. But when we build systems, we always need consistent outputs, because we don’t want to break other programming logic in our system.
+
+Prompt engineering is simply a technique to improve the capacity of LLMs. A prompt is just the text we send to an LLM. For example, while using ChatGPT directly, the text we send is very simple. But when we use APIs, we often create prompts using a special structure with multiple elements:
+
+Instructions: Tell the LLM what it needs to do (e.g., translation, summarization).
+Input Data: The actual data on which the instruction should be performed.
+Context: Additional information that helps the LLM understand better.
+Output Indicator: Tells the LLM how or from where the output should start.
+
+Example
+Prompt:
+You are an English grammar assistant. 
+Fix grammar: "i is mustafa zuberi" 
+Give only the corrected sentence as output.
+
+Context → You are an English grammar assistant.
+Instruction → Fix grammar
+Input Data → "i is mustafa zuberi"
+Output Indicator → Give only the corrected sentence as output.
+
+
+Zero-shot prompting?
+Zero-shot prompting is when we don’t give any examples to the LLM. We directly ask a question or give an instruction in the prompt, and the model tries to generate the answer based on its knowledge.
+
+e.g: Translate this sentence into French: "I am learning AI."
+
+in simple terms, zero-shot prompting usually doesn’t include extra context or output indicators. You just give the instruction and the input, and the model tries to generate the output based on its training.
