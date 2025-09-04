@@ -139,3 +139,71 @@ Zero-shot prompting is when we don’t give any examples to the LLM. We directly
 e.g: Translate this sentence into French: "I am learning AI."
 
 in simple terms, zero-shot prompting usually doesn’t include extra context or output indicators. You just give the instruction and the input, and the model tries to generate the output based on its training.
+
+
+LLM Settings?
+
+1 - TEMPERATURE: The temperature setting controls how creative or deterministic the model’s responses are. A higher value (e.g., 0.8) makes the output more creative and varied, while a lower value (e.g., 0.2) makes it more focused and predictable. The choice depends on the use case—for example, for content creation where creativity is needed, a higher temperature works better. In contrast, for decision-making tasks that require accuracy and consistency, a lower temperature is preferred.
+
+2 - Top-p (nucleus sampling):
+When the model picks the next word, every word has a chance (like tea 60%, coffee 30%, juice 8%, car 2%). All chances together = 100%.
+
+Top-p says: “Only keep the biggest words until their chances add up to a certain number.”
+
+Example: top_p = 0.9 → tea (60) + coffee (30) = 90%. Only tea and coffee are allowed.
+
+top_p = 1.0 → keep all words (tea, coffee, juice, car).
+top_p = 0.1 → keep just tea (already bigger than 10%).
+
+👉 Higher top_p = more creative (more words to choose).
+👉 Lower top_p = more focused (fewer words to choose).
+👉 Usually, you use either top_p or temperature to control randomness, not both.
+
+
+EXAMPLE for top_p and temperature?
+
+Step 1: The situation
+
+We want to finish:
+“I want to drink a cup of …”
+The model thinks:
+Tea is very likely
+Coffee is also likely
+Juice is a little likely
+Car is super unlikely
+
+Step 2: What Temperature does 🎲
+
+Think of it like how seriously we take the model’s guess.
+Low temperature → always pick the safest guess (tea).
+High temperature → sometimes pick other guesses (coffee, juice, maybe even car).
+👉 Temperature = how risky or safe the choice is.
+
+Step 3: What Top-p does 🪣
+Think of it like crossing out bad options before choosing.
+High top-p → keep all options (tea, coffee, juice, car).
+Lower top-p → only keep the best options (maybe just tea + coffee).
+Very low top-p → keep only tea.
+👉 Top-p = how many options you allow.
+Super short difference
+Temperature = do we play safe or risky with the options?
+Top-p = how many options do we even keep before picking?
+
+
+
+3 - Stop: Tell the model to stop talking when it says a certain word.
+
+4 - max_completion_tokens:  is a setting that limits how long the model’s output can be. A token is a small piece of text (it could be a word, part of a word, or punctuation), and roughly 1,000 tokens equal about 750 words in English. By setting this limit, you tell the model the maximum number of tokens it can generate in its response. For example, if you set max_completion_tokens: 100, the model will stop after about 75 words, giving you a short, focused reply. If you set max_completion_tokens: 1000, the model can produce a much longer answer, around 750 words. This is useful when you want to control cost, avoid overly long answers, or keep responses within a specific length. In simple words: it’s like telling the model, “You can talk, but only this much and no more.”
+
+
+5 - Presence penalty: Lowers the chance of saying the same word again at all. (One-time fixed penalty, no matter how many repeats.) 
+
+7 - Frequency penalty: Lowers the chance more and more each time the word is repeated. Presence penalty = stop reuse Frequency penalty = stop overuse
+
+Both presence penalty and frequency penalty work by reducing the probability of picking the repeated word again when the model chooses the next word.
+
+Presence penalty: Drops the probability right away after the word shows up once.
+Frequency penalty: Drops the probability a little, then more, then more… the more times the word shows up.
+
+Presence penalty = stop reuse (don’t repeat at all).
+Frequency penalty = stop overuse (don’t repeat too much).

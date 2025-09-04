@@ -5,6 +5,7 @@ const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
 async function main() {
   const completion = await groq.chat.completions
     .create({   
+      temperature: 1,
       messages: [
         {
           role: "system",
@@ -16,7 +17,6 @@ async function main() {
         },
       ],     
       model: "llama-3.3-70b-versatile",
-      temperature: 0.2
     })
    
     const response = completion.choices[0].message.content
