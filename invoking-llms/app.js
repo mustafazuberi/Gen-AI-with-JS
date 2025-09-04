@@ -1,4 +1,4 @@
-
+import readline from "node:readline/promises"
 import Groq from "groq-sdk";
 import { tavily } from "@tavily/core";
 
@@ -50,6 +50,11 @@ async function main() {
 }
 
 async function toolCalling() {
+    const rl = readline.createInterface({
+        input: process.stdin,
+        output: process.stdout
+    });
+
     const messages = [
         {
             role: "system",
@@ -86,40 +91,52 @@ async function toolCalling() {
     let toolsCalled = false
 
     while (true) {
-        const completions = await groq.chat.completions.create({
-            model: "llama-3.3-70b-versatile",
-            temperature: 0,
-            messages,
-            tools: toolsCalled ? [] : tools,
-            tool_choice: 'auto'
-        });
+        const question = await rl.question('You: ');
 
-        const message = completions.choices[0].message;
-        const toolCalls = message.tool_calls;
-
-
-        if (!toolCalls || toolCalls.length === 0) {
-            console.log("FINAL RESULT: ", JSON.stringify(completions.choices[0].message, null, 2));
+        if (question === "bye") {
             break
         }
 
-        for (const toolCall of toolCalls) {
-            const functionName = toolCall.function.name;
-            const functionParams = JSON.parse(toolCall.function.arguments);
+        messages.push({ role: 'user', content: question });
 
-            if (functionName === 'webSearch') {
-                const toolResult = await webSearch(functionParams);
-                messages.push({
-                    tool_call_id: toolCall.id,
-                    role: 'tool',
-                    name: functionName,
-                    content: toolResult
-                });
+        while (true) {
+            const completions = await groq.chat.completions.create({
+                model: "llama-3.3-70b-versatile",
+                temperature: 0,
+                messages,
+                tools: toolsCalled ? [] : tools,
+                tool_choice: 'auto'
+            });
 
-                toolsCalled = true;
+            const message = completions.choices[0].message;
+            const toolCalls = message.tool_calls;
+
+
+            if (!toolCalls || toolCalls.length === 0) {
+                console.log("FINAL RESULT: ", JSON.stringify(completions.choices[0].message, null, 2));
+                break
+            }
+
+            for (const toolCall of toolCalls) {
+                const functionName = toolCall.function.name;
+                const functionParams = JSON.parse(toolCall.function.arguments);
+
+                if (functionName === 'webSearch') {
+                    const toolResult = await webSearch(functionParams);
+                    messages.push({
+                        tool_call_id: toolCall.id,
+                        role: 'tool',
+                        name: functionName,
+                        content: toolResult
+                    });
+
+                    toolsCalled = true;
+                }
             }
         }
     }
+
+    rl.close();
 }
 
 
