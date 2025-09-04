@@ -59,7 +59,7 @@ async function toolCalling() {
         },
         {
             role: 'user',
-            content: `When was iPhone 16 launched?`,
+            content: `what is the current weather in mumbai?`,
         },
     ];
 
@@ -83,48 +83,48 @@ async function toolCalling() {
         },
     ];
 
-    // First assistant completion
-    const completions = await groq.chat.completions.create({
-        model: "llama-3.3-70b-versatile",
-        temperature: 0,
-        messages,
-        tools,
-        tool_choice: 'auto'
-    });
+    let toolsCalled = false
 
-    const message = completions.choices[0].message;
-    const toolCalls = message.tool_calls;
+    while (true) {
+        const completions = await groq.chat.completions.create({
+            model: "llama-3.3-70b-versatile",
+            temperature: 0,
+            messages,
+            tools: toolsCalled ? [] : tools,
+            tool_choice: 'auto'
+        });
 
-    if (!toolCalls || toolCalls.length === 0) return
+        const message = completions.choices[0].message;
+        const toolCalls = message.tool_calls;
 
-    for (const toolCall of toolCalls) {
-        const functionName = toolCall.function.name;
-        const functionParams = JSON.parse(toolCall.function.arguments);
 
-        if (functionName === 'webSearch') {
-            const toolResult = await webSearch(functionParams);
+        if (!toolCalls || toolCalls.length === 0) {
+            console.log("FINAL RESULT: ", JSON.stringify(completions.choices[0].message, null, 2));
+            break
+        }
 
-            messages.push({
-                tool_call_id: toolCall.id,
-                role: 'tool',
-                name: functionName,
-                content: toolResult
-            });
+        for (const toolCall of toolCalls) {
+            const functionName = toolCall.function.name;
+            const functionParams = JSON.parse(toolCall.function.arguments);
+
+            if (functionName === 'webSearch') {
+                const toolResult = await webSearch(functionParams);
+                messages.push({
+                    tool_call_id: toolCall.id,
+                    role: 'tool',
+                    name: functionName,
+                    content: toolResult
+                });
+
+                toolsCalled = true;
+            }
         }
     }
-
-    const completion2 = await groq.chat.completions.create({
-        model: "llama-3.3-70b-versatile",
-        temperature: 0,
-        messages,
-        tool_choice: 'auto'
-    });
-
-    console.log("FINAL RESULT: ", JSON.stringify(completion2.choices[0].message, null, 2));
 }
 
 
 async function webSearch({ query }) {
+    console.log('web search called')
     const response = await tvly.search(query);
     const finalResult = response.results.map(result => result.content).join('\n\n');
     return finalResult;
