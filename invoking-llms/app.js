@@ -50,69 +50,85 @@ async function main() {
 }
 
 async function toolCalling() {
-    const completion = await groq.chat.completions
-        .create({
-            model: "llama-3.3-70b-versatile",
-            temperature: 0,
-            messages: [
-                {
-                    role: "system",
-                    content: `you are a smart personal assistant who answers the asked questions.
-                    You have access to a web search tool to search the latest information and real time data on the internet.
-                    1. searchWeb({query}: {query: string})  `
-                },
-                {
-                    role: 'user',
-                    content: `What is the current weather in mumbai.`,
-                },
-            ],
-            tools: [
-                {
-                    type: "function",
-                    function: {
-                        name: "webSearch",
-                        description: "Search the latest information and real time data on the internet.",
-                        parameters: {
-                            type: "object",
-                            properties: {
-                                query: {
-                                    type: "string",
-                                    description: "The search query to perform search on."
-                                },
-                            },
-                            required: ["query"]
-                        }
-                    }
-                },
-            ],
-            tool_choice: 'auto'
-        })
+    const messages = [
+        {
+            role: "system",
+            content: `You are a smart personal assistant who answers questions.
+               You have access to a web search tool to search the latest information and real-time data on the internet.
+               1. searchWeb({query}: {query: string})`
+        },
+        {
+            role: 'user',
+            content: `When was iPhone 16 launched?`,
+        },
+    ];
 
-    const toolCalls = completion.choices[0].message.tool_calls
+    const tools = [
+        {
+            type: "function",
+            function: {
+                name: "webSearch",
+                description: "Search the latest information and real-time data on the internet.",
+                parameters: {
+                    type: "object",
+                    properties: {
+                        query: {
+                            type: "string",
+                            description: "The search query to perform search on."
+                        },
+                    },
+                    required: ["query"]
+                }
+            }
+        },
+    ];
 
-    if (!toolCalls) {
-        console.log('Assistant: ', completion.choices[0].message.content)
-        return
-    }
+    // First assistant completion
+    const completions = await groq.chat.completions.create({
+        model: "llama-3.3-70b-versatile",
+        temperature: 0,
+        messages,
+        tools,
+        tool_choice: 'auto'
+    });
+
+    const message = completions.choices[0].message;
+    const toolCalls = message.tool_calls;
+
+    if (!toolCalls || toolCalls.length === 0) return
 
     for (const toolCall of toolCalls) {
-        const functionName = toolCall.function.name
-        const functionParams = JSON.parse(toolCall.function.arguments)
+        const functionName = toolCall.function.name;
+        const functionParams = JSON.parse(toolCall.function.arguments);
 
         if (functionName === 'webSearch') {
-            const toolResponse = await webSearch(functionParams)
-            console.log('Tool Response: ', toolResponse)
+            const toolResult = await webSearch(functionParams);
+
+            messages.push({
+                tool_call_id: toolCall.id,
+                role: 'tool',
+                name: functionName,
+                content: toolResult
+            });
         }
     }
+
+    const completion2 = await groq.chat.completions.create({
+        model: "llama-3.3-70b-versatile",
+        temperature: 0,
+        messages,
+        tool_choice: 'auto'
+    });
+
+    console.log("FINAL RESULT: ", JSON.stringify(completion2.choices[0].message, null, 2));
 }
+
 
 async function webSearch({ query }) {
-    console.log("Calling web search ", query)
     const response = await tvly.search(query);
-    console.log(response)
+    const finalResult = response.results.map(result => result.content).join('\n\n');
+    return finalResult;
 }
-
-
 
 // main();
 toolCalling();
