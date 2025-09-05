@@ -59,8 +59,9 @@ async function toolCalling() {
         {
             role: "system",
             content: `You are a smart personal assistant who answers questions.
-               You have access to a web search tool to search the latest information and real-time data on the internet.
-               1. searchWeb({query}: {query: string})`
+               You have access to following tools:
+               1. searchWeb({query}: {query: string}) // Search the latest information and real-time data on the internet.
+               current date and time: ${new Date().toString()}`
         },
         {
             role: 'user',
@@ -93,9 +94,7 @@ async function toolCalling() {
     while (true) {
         const question = await rl.question('You: ');
 
-        if (question === "bye") {
-            break
-        }
+        if (question === "bye") break;
 
         messages.push({ role: 'user', content: question });
 
