@@ -63,33 +63,11 @@ async function toolCalling() {
                1. searchWeb({query}: {query: string}) // Search the latest information and real-time data on the internet.
                current date and time: ${new Date().toString()}`
         },
-        {
-            role: 'user',
-            content: `what is the current weather in mumbai?`,
-        },
+        // {
+        //     role: 'user',
+        //     content: `what is the current weather in mumbai?`,
+        // },
     ];
-
-    const tools = [
-        {
-            type: "function",
-            function: {
-                name: "webSearch",
-                description: "Search the latest information and real-time data on the internet.",
-                parameters: {
-                    type: "object",
-                    properties: {
-                        query: {
-                            type: "string",
-                            description: "The search query to perform search on."
-                        },
-                    },
-                    required: ["query"]
-                }
-            }
-        },
-    ];
-
-    let toolsCalled = false
 
     while (true) {
         const question = await rl.question('You: ');
@@ -103,7 +81,25 @@ async function toolCalling() {
                 model: "llama-3.3-70b-versatile",
                 temperature: 0,
                 messages,
-                tools: toolsCalled ? [] : tools,
+                tools: [
+                    {
+                        type: "function",
+                        function: {
+                            name: "webSearch",
+                            description: "Search the latest information and real-time data on the internet.",
+                            parameters: {
+                                type: "object",
+                                properties: {
+                                    query: {
+                                        type: "string",
+                                        description: "The search query to perform search on."
+                                    },
+                                },
+                                required: ["query"]
+                            }
+                        }
+                    },
+                ],
                 tool_choice: 'auto'
             });
 
@@ -111,9 +107,10 @@ async function toolCalling() {
             const toolCalls = message.tool_calls;
 
 
-            if (!toolCalls || toolCalls.length === 0) {
-                console.log("FINAL RESULT: ", JSON.stringify(completions.choices[0].message, null, 2));
-                break
+            if (!toolCalls) {
+                // ✅ This is the final natural-language assistant answer
+                console.log("Assistant:", message.content || "(no content)");
+                break;
             }
 
             for (const toolCall of toolCalls) {
@@ -129,7 +126,11 @@ async function toolCalling() {
                         content: toolResult
                     });
 
-                    toolsCalled = true;
+                    // 🔴 NEW: Add a clarifying system message for the final phase
+                    messages.push({
+                        role: "system",
+                        content: "You now have the search results. Answer the user in plain natural language only. Do NOT call any functions or tools again."
+                    });
                 }
             }
         }
@@ -140,7 +141,6 @@ async function toolCalling() {
 
 
 async function webSearch({ query }) {
-    console.log('web search called')
     const response = await tvly.search(query);
     const finalResult = response.results.map(result => result.content).join('\n\n');
     return finalResult;
