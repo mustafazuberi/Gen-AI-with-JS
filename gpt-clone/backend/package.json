@@ -1,0 +1,12 @@
+{
+    "scripts": {
+        "dev": "node --env-file=.env server.js"
+    },
+    "dependencies": {
+        "@tavily/core": "^0.5.11",
+        "express": "^5.1.0",
+        "groq-sdk": "^0.32.0"
+    },
+    "name": "backend",
+    "type": "module"
+}

@@ -2,8 +2,17 @@
     "scripts": {
         "dev": "node --env-file=.env app.js"
     },
-  "dependencies": {
-    "@tavily/core": "^0.5.11",
-    "groq-sdk": "^0.31.0"
-  }
+    "dependencies": {
+        "@tavily/core": "^0.5.11",
+        "groq-sdk": "^0.31.0"
+    },
+    "name": "invoking-llms",
+    "version": "1.0.0",
+    "description": "",
+    "main": "app.js",
+    "devDependencies": {},
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "type": "commonjs"
 }
