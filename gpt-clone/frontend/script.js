@@ -46,7 +46,7 @@ async function callServer(inputText) {
         },
         body: JSON.stringify({ threadId: threadId, message: inputText }),
     });
-
+ 
     if (!response.ok) {
         throw new Error('Error generating the response.');
     }
