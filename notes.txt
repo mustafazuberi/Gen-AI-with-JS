@@ -214,3 +214,9 @@ More at: https://openai.com/index/introducing-structured-outputs-in-the-api/
 
 Tool Calling?
 Tool calling in generative AI is when a model uses an external app, API, or service to get real-time data or perform actions it cannot do on its own. Instead of relying only on its pre-trained knowledge—which can be outdated or incomplete—the AI calls the appropriate tool to provide accurate and actionable results. For example, if you tell the AI to book a meeting with Alex tomorrow at 3 PM, it cannot access your calendar by itself, so it calls a Calendar API (after being granted access) to schedule the meeting. Similarly, if you ask an older AI model which only knows information up to 2023 when the iPhone 16 was launched, it might give a wrong answer. But by enabling web search as a tool, the AI can query the internet in real-time to fetch the correct launch date. Tool calling thus allows AI to bridge its natural language understanding with external computation or live data, making its responses reliable, precise, and practical for real-world tasks.
+
+RAG? 
+RAG, or Retrieval-Augmented Generation, is a technique where a language model retrieves relevant documents or data from an external knowledge source and then uses that information to generate more accurate and up-to-date responses
+
+VECTOR DATABASES?
+When we build an AI using RAG, a normal LLM isn’t enough because it can only answer from what it already knows and may get confused if a question is asked in a different way. For example, if a document says, “Our office in Karachi opens at 9 AM and closes at 6 PM,” a user asking, “When can I visit the Karachi office?” or “What are the working hours in Karachi?” might not get the right answer. To fix this, we use a vector database, which helps the AI find the most relevant information by comparing the meaning of the question with the documents. This way, the AI can give accurate answers even if the question is asked in different words.
