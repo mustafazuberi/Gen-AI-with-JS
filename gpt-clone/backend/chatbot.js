@@ -39,7 +39,15 @@ export async function generate(userMessage, threadId) {
 
     messages.push({ role: 'user', content: userMessage });
 
+    const MAX_RETIRES = 10
+    let count = 0
+
     while (true) {
+        if (count > MAX_RETIRES) {
+            return "I could not find the result, please try again."
+        }
+        count++;
+        
         const completions = await groq.chat.completions.create({
             model: "llama-3.3-70b-versatile",
             temperature: 0,
