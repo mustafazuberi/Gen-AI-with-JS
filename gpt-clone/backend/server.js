@@ -14,7 +14,15 @@ app.get('/', (req, res) => {
 })
 
 app.post('/chat', async (req, res) => {
-    const result = await generate(req.body.message)
+    const { threadId, message } = req.body
+
+    if (!message || !threadId) {
+        res.status(400).send({ error: 'threadId and message are required' });
+        return
+    }
+
+    const result = await generate(message, threadId);
+
     res.send({ message: result });
 })
 

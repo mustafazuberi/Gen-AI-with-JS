@@ -1,14 +1,15 @@
 import Groq from "groq-sdk";
 import { tavily } from "@tavily/core";
+import NodeCache from "node-cache";
 
 const tvly = tavily({ apiKey: process.env.TAVILY_API_KEY });
 const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
+const cache = new NodeCache({ stdTTL: 60 * 60 * 24 }); // Cache results for 24 hours
 
-export async function generate(userMessage) {
-    const messages = [
-         {
-            role: 'system',
-            content: `You are a smart personal assistant.
+const baseMessages = [
+    {
+        role: 'system',
+        content: `You are a smart personal assistant.
                     If you know the answer to a question, answer it directly in plain English.
                     If the answer requires real-time, local, or up-to-date information, or if you don’t know the answer, use the available tools to find it.
                     You have access to the following tool:
@@ -30,8 +31,11 @@ export async function generate(userMessage) {
                     A: (use the search tool to get the latest news)
 
                     current date and time: ${new Date().toUTCString()}`,
-        },
-    ];
+    },
+];
+
+export async function generate(userMessage, threadId) {
+    const messages = cache.get(threadId) ?? [...baseMessages];
 
     messages.push({ role: 'user', content: userMessage });
 
@@ -65,7 +69,12 @@ export async function generate(userMessage) {
         const message = completions.choices[0].message;
         const toolCalls = message.tool_calls;
 
-        if (!toolCalls) return completions.choices[0].message.content;
+        if (!toolCalls) {
+            // Here we end the chatbot response
+            cache.set(threadId, messages);
+            console.log(JSON.stringify(cache.data))
+            return completions.choices[0].message.content;
+        }
 
         for (const toolCall of toolCalls) {
             const functionName = toolCall.function.name;
