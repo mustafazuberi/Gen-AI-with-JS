@@ -220,3 +220,28 @@ RAG, or Retrieval-Augmented Generation, is a technique where a language model re
 
 VECTOR DATABASES?
 When we build an AI using RAG, a normal LLM isn’t enough because it can only answer from what it already knows and may get confused if a question is asked in a different way. For example, if a document says, “Our office in Karachi opens at 9 AM and closes at 6 PM,” a user asking, “When can I visit the Karachi office?” or “What are the working hours in Karachi?” might not get the right answer. To fix this, we use a vector database, which helps the AI find the most relevant information by comparing the meaning of the question with the documents. This way, the AI can give accurate answers even if the question is asked in different words.
+
+VECTOR EMBEDDINGS?
+Vector embeddings are a way to represent text or data as numbers. These numbers are arranged so that things with similar meanings end up having similar numerical patterns.
+
+To create vector embeddings, we use special machine learning models called embedding models. These models take text (or other data) and convert it into a set of numbers that capture its meaning.
+
+You don’t need to build these models from scratch—many already exist. For example, OpenAI, Microsoft, and several open-source projects provide ready-to-use embedding models.
+
+Vector Databases?
+
+Once we have embeddings, we need a place to store them and search through them. This is where vector databases come in.
+
+A vector database is built specifically to handle embeddings (the numerical representations of data). Since embeddings naturally form clusters of similar items (e.g., cat, dog, puppy close together, table and chair in another cluster), a vector database makes it very efficient to search within these clusters and quickly find what’s most similar.
+
+
+Why not just use a normal database (like Postgres or MySQL)?
+Traditional databases are great for exact matches (e.g., “find the user with ID = 5”).
+But embeddings require similarity search (e.g., “find the top 10 closest vectors to this one”).
+Normal databases can technically do this, but they aren’t optimized for it. Searching millions of vectors for similarity would be too slow and resource-heavy.
+
+
+Why vector databases are highlighted
+They use special indexing techniques (like HNSW, IVF, PQ) that make similarity search fast and scalable, even with billions of embeddings.
+They are designed for clustering behavior — meaning they can easily return groups of related items.
+This makes them the go-to choice when working with embeddings for tasks like search, recommendations, chatbots, and more.
