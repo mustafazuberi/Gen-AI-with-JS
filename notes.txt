@@ -218,8 +218,20 @@ Tool calling in generative AI is when a model uses an external app, API, or serv
 RAG? 
 RAG, or Retrieval-Augmented Generation, is a technique where a language model retrieves relevant documents or data from an external knowledge source and then uses that information to generate more accurate and up-to-date responses
 
+
+-------------------------------------------------
+
+
+
 VECTOR DATABASES?
 When we build an AI using RAG, a normal LLM isn’t enough because it can only answer from what it already knows and may get confused if a question is asked in a different way. For example, if a document says, “Our office in Karachi opens at 9 AM and closes at 6 PM,” a user asking, “When can I visit the Karachi office?” or “What are the working hours in Karachi?” might not get the right answer. To fix this, we use a vector database, which helps the AI find the most relevant information by comparing the meaning of the question with the documents. This way, the AI can give accurate answers even if the question is asked in different words.
+
+
+
+-------------------------------------------------
+
+
+
 
 VECTOR EMBEDDINGS?
 Vector embeddings are a way to represent text or data as numbers. These numbers are arranged so that things with similar meanings end up having similar numerical patterns.
@@ -227,6 +239,12 @@ Vector embeddings are a way to represent text or data as numbers. These numbers 
 To create vector embeddings, we use special machine learning models called embedding models. These models take text (or other data) and convert it into a set of numbers that capture its meaning.
 
 You don’t need to build these models from scratch—many already exist. For example, OpenAI, Microsoft, and several open-source projects provide ready-to-use embedding models.
+
+
+
+-------------------------------------------------
+
+
 
 Vector Databases?
 
@@ -245,3 +263,65 @@ Why vector databases are highlighted
 They use special indexing techniques (like HNSW, IVF, PQ) that make similarity search fast and scalable, even with billions of embeddings.
 They are designed for clustering behavior — meaning they can easily return groups of related items.
 This makes them the go-to choice when working with embeddings for tasks like search, recommendations, chatbots, and more.
+
+-------------------------------------------------
+
+
+How to Search Vector Embeddings in a Vector Database?
+
+When we use an embedding model (like OpenAI’s), it converts data (for example, the word "dog") into a vector 
+with many dimensions. For instance, OpenAI’s model might create a vector with 1,532 numbers.  
+
+If a vector database stores millions of these embeddings, directly checking every number in every vector 
+would be far too slow.  
+
+The Solution: Vector Index
+--------------------------
+To make search fast, vector databases use a special data structure called a "vector index".  
+
+- A vector index organizes embeddings so that we can quickly find the "nearest neighbors" (the most similar vectors).  
+- This avoids scanning through all vectors one by one.  
+- Common techniques for building these indexes include:  
+  - HNSW (Hierarchical Navigable Small World graphs)  
+  - IVF (Inverted File Index)  
+
+How Similarity is Measured
+--------------------------
+After the index finds possible matches, the database needs to calculate how close two vectors are.  
+The most common method is **cosine similarity**:  
+
+Cosine Similarity = (A · B) / (||A|| × ||B||)
+
+- A · B = dot product of the two vectors  
+- ||A|| and ||B|| = the lengths (magnitudes) of the vectors  
+- This measures the angle between the vectors:  
+  - If the angle is small (cosine close to 1), the vectors are very similar.  
+  - If the angle is large (cosine near 0 or negative), they are less similar.  
+
+In Practice
+-----------
+1. Convert your query (e.g., "cat") into an embedding vector.  
+2. The vector index quickly finds candidate vectors that are nearby.  
+3. Cosine similarity (or other metrics like Euclidean distance) is used to rank these candidates.  
+4. The most similar results are returned (e.g., "dog", "puppy", "kitten").  
+
+Summary
+-------
+- Embeddings = turn data into numbers that capture meaning.  
+- Vector Index = special structure that makes searching fast.  
+- Cosine Similarity = method to measure how close two vectors are.  
+- Vector Databases = store embeddings and use indexes + similarity measures to give you the nearest results.  
+
+
+
+
+
+
+
+
+This is How we built RAG Systems
+So there are actually two phases of doing this. First, we have to prepare the document. The first phase is called indexing. Let’s say we have a company policy document of a company. First, we will split it into chunks, and the reason is we cannot store the whole document directly. The reason is whenever we do a search, we don’t want to retrieve the whole document — we want to retrieve only similar information. So from the start, we divide the document into chunks, and the next thing is we generate embeddings of these chunks using embedding models and we store these embeddings in vector databases.
+
+Now you could say, where is that indexing part? A vector database doesn’t just store all the embeddings as a long list. Instead, it automatically organizes them using special data structures called vector indexes. These indexes are designed to make searching fast, even when there are millions of vectors. The database then uses algorithms like cosine similarity (which measures the angle between two vectors) to figure out how close or similar two embeddings are. This means instead of comparing your query with every single vector one by one, the index quickly narrows down the search to only the most likely matches, saving time and making retrieval efficient.
+
+So now, when we make a request to the LLM, first we will not pass that input (text) to the LLM. Instead, we will first convert that input to an embedding and then, using that embedding, we will find relevant chunks from the vector database. In the vector database, we don’t only have embeddings but we have the original text as well. So now, additional information and the user input will be fed into the LLM, and then the LLM will generate the output.
